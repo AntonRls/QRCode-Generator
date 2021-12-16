@@ -19,3 +19,6 @@
 Например закодируем слово "москва":
 <br/><br/>
 ![Без имени-2](https://user-images.githubusercontent.com/74132592/146435056-f0bcf772-38a9-43dd-9fc0-a63884959dad.png)
+<br/><br/>
+Результат программы:<br/><br/>
+![res](https://user-images.githubusercontent.com/74132592/146435396-468c3a8f-542b-43ef-9cf3-6183247264f8.png)
