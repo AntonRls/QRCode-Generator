@@ -69,6 +69,7 @@ namespace QRCode_generator
                             if (aphafit[i] == c.ToString())
                             {
                                 index = i;
+                                
                                 break;
                             }
                         }
