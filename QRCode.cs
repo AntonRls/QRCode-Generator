@@ -9,30 +9,30 @@ namespace QRCode_generator
 {
     class QRCode
     {
-        private Bitmap qrCode;
-        private Graphics gr;
+        private Bitmap QrCode;
+        private Graphics Graphics;
         /// <summary>
         /// Создание класса QRCode
         /// </summary>
         /// <param name="size">Размер QRCode</param>
         public QRCode(int size)
         {
-            qrCode = new Bitmap(size, size);
-            initQRCode(false, null);
+            QrCode = new Bitmap(size, size);
+            InitQRCode(false, null);
         }
         public QRCode(int size, bool fillBaground, Brush brush)
         {
-            qrCode = new Bitmap(size, size);
-            initQRCode(fillBaground, brush);
+            QrCode = new Bitmap(size, size);
+            InitQRCode(fillBaground, brush);
         }
         /// <summary>
         /// Алфавит. По умолчанию Русский. Нулевой элемент должен быть пустым
         /// </summary>
-        public List<string> aphafit = new List<string>()
+        public static List<string> Alphabet = new List<string>()
         {
             "","а","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","о","п","р","с","т","у","ф","х","ц","ч","ш","щ","ъ","ы","ь","э","ю","я"
         };
-        private List<int> number = new List<int>()
+        private List<int> Number = new List<int>()
         {
             1,2,4,8,16,32
         };
@@ -42,7 +42,7 @@ namespace QRCode_generator
         /// Переводит текст в QR код
         /// </summary>
         /// <param name="text">Текст, не больше 7 символов</param>
-        public void GenerateCode(string text)
+        public Bitmap GenerateCode(string text)
         {
 
             int currentGroup = 1;
@@ -64,12 +64,11 @@ namespace QRCode_generator
                         }
 
                         int index = 0;
-                        for (int i = 0; i < aphafit.Count; i++)
+                        for (int i = 0; i < Alphabet.Count; i++)
                         {
-                            if (aphafit[i] == c.ToString())
+                            if (Alphabet[i] == c.ToString())
                             {
                                 index = i;
-                                
                                 break;
                             }
                         }
@@ -83,13 +82,13 @@ namespace QRCode_generator
                             for (int i = 0; i < Grop; i++)
                             {
 
-                                for (int i2 = 0; i2 < number.Count; i2++)
+                                for (int i2 = 0; i2 < Number.Count; i2++)
                                 {
                                     int lastI3 = -1;
 
                                     if (sum.Count < Grop)
                                     {
-                                        sum.Add(number[i2]);
+                                        sum.Add(Number[i2]);
                                     }
                                     if (Sum(sum) == index)
                                     {
@@ -104,22 +103,22 @@ namespace QRCode_generator
                                         }
                                         else if (sum.Count < Grop && lastI3 != -1)
                                         {
-                                            sum.Remove(number[lastI3]);
+                                            sum.Remove(Number[lastI3]);
                                         }
 
                                     }
 
                                     if (Grop > 1)
                                     {
-                                        for (int i3 = 0; i3 < number.Count; i3++)
+                                        for (int i3 = 0; i3 < Number.Count; i3++)
                                         {
-                                            if (number[i2] == number[i3]) continue;
+                                            if (Number[i2] == Number[i3]) continue;
 
                                             if (sum.Count < Grop)
                                             {
                                                 if (Sum(sum) != index)
                                                 {
-                                                    sum.Add(number[i3]);
+                                                    sum.Add(Number[i3]);
                                                     lastI3 = i3;
                                                     if (Sum(sum) == index)
                                                     {
@@ -127,7 +126,7 @@ namespace QRCode_generator
                                                     }
                                                     else if (Sum(sum) > index)
                                                     {
-                                                        sum.Remove(number[i3]);
+                                                        sum.Remove(Number[i3]);
                                                         lastI3 = -1;
                                                     }
                                                     else if (sum.Count >= Grop)
@@ -156,7 +155,7 @@ namespace QRCode_generator
                                         }
                                         else if (sum.Count < Grop && lastI3 != -1)
                                         {
-                                            sum.Remove(number[lastI3]);
+                                            sum.Remove(Number[lastI3]);
                                         }
 
                                     }
@@ -223,12 +222,12 @@ namespace QRCode_generator
                                 foreach (int s in sum)
                                 {
                                     int index = 0;
-                                    foreach (int num in number)
+                                    foreach (int num in Number)
                                     {
                                         if (s == num) break;
                                         index++;
                                     }
-                                    draPixel(gr, p.points[index]);
+                                    draPixel(Graphics, p.points[index]);
 
                                 }
                                 break;
@@ -239,17 +238,96 @@ namespace QRCode_generator
 
                 }
             }
+            return QrCode;
         }
+
         /// <summary>
         /// Сохраняет QRCode по указаному пути
         /// </summary>
         /// <param name="path">Путь</param>
         public void SaveCode(string path)
         {
-            qrCode.Save(path);
+            QrCode.Save(path);
         }
 
 
+        /// <summary>
+        /// Декодирует QR код
+        /// </summary>
+        /// <param name="qrcode"></param>
+        /// <returns>Возвращает строку, которую содержит QR Код</returns>
+        public static string Decode(Bitmap qrcode)
+        {
+
+            int PixelSize = qrcode.Height / 10;
+            List<PointQr> qrPoints = new List<PointQr>();
+            for (int i = 1; i < 5; i++)
+            {
+                List<Point> p = new List<Point>(0);
+                for (int iY = 0; iY < 2; iY++)
+                {
+                    for (int iX = 0; iX < 3; iX++)
+                    {
+                        p.Add(GetCord(iX+1, iY, i));
+                    }
+
+                }
+                qrPoints.Add(new PointQr
+                {
+                    points = p,
+                    group = i
+                });
+
+            }
+            for (int i = 5; i < 8; i++)
+            {
+                List<Point> p = new List<Point>(0);
+                for (int iY = 0; iY < 3; iY++)
+                {
+                    for (int iX = 0; iX < 2; iX++)
+                    {
+                        p.Add(GetCord(iX+1, iY, i));
+
+                    }
+
+                }
+                qrPoints.Add(new PointQr
+                {
+                    points = p,
+                    group = i
+                });
+
+            }
+            string result = "";
+          
+            foreach(PointQr point in qrPoints)
+            {
+                int Sum = 0;
+                int Count = 1;
+                foreach(var cell in point.points)
+                {
+                    if (GetColorFromPixelImage(qrcode, PixelSize, cell.X, cell.Y).R == 0)
+                    {
+                        Sum += Count;
+                    }
+                    Count =Count* 2;
+                    
+                }
+                if (Sum != 0)
+                {
+                    result += Alphabet[Sum]; 
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return result;
+        }
+        private static Color GetColorFromPixelImage(Bitmap source, int PixelSize, int x, int y)
+        {
+            return source.GetPixel(PixelSize * x - 1, PixelSize * y + 1);
+        }
         List<PointQr> qrPoints = new List<PointQr>(0);
         struct PointQr
         {
@@ -259,42 +337,42 @@ namespace QRCode_generator
         /// <summary>
         /// Должен быть вызван сразу после создания класса
         /// </summary>
-        /// <param name="gr"></param>
-        private void initQRCode(bool fill, Brush brush)
+        /// <param name="Graphics"></param>
+        private void InitQRCode(bool fill, Brush brush)
         {
-            gr = Graphics.FromImage(qrCode);
-            pixelSize = qrCode.Height / 10;
+            Graphics = Graphics.FromImage(QrCode);
+            pixelSize = QrCode.Height / 10;
             if (fill)
             {
-                gr.FillRectangle(brush, new Rectangle(new Point(0, 0), new Size(qrCode.Height, qrCode.Height)));
+                Graphics.FillRectangle(brush, new Rectangle(new Point(0, 0), new Size(QrCode.Height, QrCode.Height)));
             }
             {
                 for (int i = 0; i < 6; i++)
                 {
-                    draPixel(gr, new Point(i, 0));
+                    draPixel(Graphics, new Point(i, 0));
                 }
                 for (int i = 0; i < 6; i++)
                 {
-                    draPixel(gr, new Point(0, i));
+                    draPixel(Graphics, new Point(0, i));
                 }
                 for (int i = 0; i < 6; i++)
                 {
-                    draPixel(gr, new Point(i, 5));
+                    draPixel(Graphics, new Point(i, 5));
                 }
                 for (int i = 0; i < 6; i++)
                 {
-                    draPixel(gr, new Point(5, i));
+                    draPixel(Graphics, new Point(5, i));
                 }
-                draPixel(gr, new Point(7, 0));
-                draPixel(gr, new Point(9, 0));
-                draPixel(gr, new Point(2, 2));
-                draPixel(gr, new Point(3, 2));
-                draPixel(gr, new Point(3, 3));
-                draPixel(gr, new Point(2, 3));
-                draPixel(gr, new Point(0, 9));
-                draPixel(gr, new Point(0, 7));
-                draPixel(gr, new Point(9, 9));
-                draPixel(gr, new Point(7, 9));
+                draPixel(Graphics, new Point(7, 0));
+                draPixel(Graphics, new Point(9, 0));
+                draPixel(Graphics, new Point(2, 2));
+                draPixel(Graphics, new Point(3, 2));
+                draPixel(Graphics, new Point(3, 3));
+                draPixel(Graphics, new Point(2, 3));
+                draPixel(Graphics, new Point(0, 9));
+                draPixel(Graphics, new Point(0, 7));
+                draPixel(Graphics, new Point(9, 9));
+                draPixel(Graphics, new Point(7, 9));
             }
             for (int i = 1; i < 5; i++)
             {
@@ -303,7 +381,7 @@ namespace QRCode_generator
                 {
                     for (int iX = 0; iX < 3; iX++)
                     {
-                        p.Add(getCord(iX, iY, i));
+                        p.Add(GetCord(iX, iY, i));
                     }
 
                 }
@@ -322,7 +400,7 @@ namespace QRCode_generator
                 {
                     for (int iX = 0; iX < 2; iX++)
                     {
-                        p.Add(getCord(iX, iY, i));
+                        p.Add(GetCord(iX, iY, i));
 
                     }
 
@@ -338,7 +416,7 @@ namespace QRCode_generator
 
         }
         private int pixelSize;
-        Point getCord(int X, int Y, int group)
+        static Point GetCord(int X, int Y, int group)
         {
             Point res;
             if (group == 1)
@@ -375,9 +453,9 @@ namespace QRCode_generator
             }
             return res;
         }
-        void draPixel(Graphics gr, Point p)
+        void draPixel(Graphics Graphics, Point p)
         {
-            gr.FillRectangle(Brushes.Black, new Rectangle(new Point(p.X * pixelSize, p.Y * pixelSize), new Size(pixelSize, pixelSize)));
+            Graphics.FillRectangle(Brushes.Black, new Rectangle(new Point(p.X * pixelSize, p.Y * pixelSize), new Size(pixelSize, pixelSize)));
         }
     }
 }
