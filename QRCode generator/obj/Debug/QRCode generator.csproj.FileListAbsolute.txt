@@ -5,3 +5,10 @@ C:\Users\Антон\source\repos\QRCode generator\QRCode generator\obj\Debug\QRC
 C:\Users\Антон\source\repos\QRCode generator\QRCode generator\obj\Debug\QRCode generator.csproj.CoreCompileInputs.cache
 C:\Users\Антон\source\repos\QRCode generator\QRCode generator\obj\Debug\QRCode generator.exe
 C:\Users\Антон\source\repos\QRCode generator\QRCode generator\obj\Debug\QRCode generator.pdb
+C:\QRCode-Generator\QRCode generator\bin\Debug\QRCode generator.exe.config
+C:\QRCode-Generator\QRCode generator\bin\Debug\QRCode generator.exe
+C:\QRCode-Generator\QRCode generator\bin\Debug\QRCode generator.pdb
+C:\QRCode-Generator\QRCode generator\obj\Debug\QRCode generator.csproj.AssemblyReference.cache
+C:\QRCode-Generator\QRCode generator\obj\Debug\QRCode generator.csproj.CoreCompileInputs.cache
+C:\QRCode-Generator\QRCode generator\obj\Debug\QRCode generator.exe
+C:\QRCode-Generator\QRCode generator\obj\Debug\QRCode generator.pdb
