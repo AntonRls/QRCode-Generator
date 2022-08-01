@@ -3,12 +3,19 @@
 ## Установка
 Перенесите файл QRCode.cs в свой проект
 ## Использование
-1. Создайте класс **QRCode**:<br/>
-```QRCode qr = new QRCode(1000);```<br/>
-2. Введите желаемый текст: <br/>
-```qr.GenerateCode("привет");```<br/>
-3. Сохраните QRCode как картинку:<br/>
-```qr.SaveCode("res.png");```
+### Создание QR кода
+1. Создаём класс **QRCode**:<br/>
+```QRCode qr = new QRCode(1000, true, Brushes.White);```<br/>
+2. Вводим желаемый текст: <br/>
+```Bitmap result = qr.GenerateCode("привет");```<br/>
+3. Сохраняем QRCode как картинку:<br/>
+```result.Save("result.png");```<br/>
+
+### Декодирование QR кода в строку
+1. Создаём QR код:<br/>
+```var QrCode = new QRCode(1000, true, Brushes.White).GenerateCode("привет");```<br/>
+2. Декодируем его в строку:<br/>
+```string result = QRCode.Decode(QrCode);```
 
 ## Информация
 Пока что библиотека умеет генерировать QR коды только до 7 символов и работает по такому принципу:
